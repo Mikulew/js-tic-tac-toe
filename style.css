@@ -38,7 +38,7 @@ body {
   background: var(--backgroundSecondary);
 }
 
-.container.hide {
+.hide {
   display: none;
 }
 
