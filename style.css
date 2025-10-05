@@ -1,3 +1,5 @@
+/* GENERAL */
+
 *,
 *::before,
 *::after {
@@ -22,12 +24,15 @@ body {
   --backgroundSecondary: #282828;
   --borderRadius: 10px;
   --animation: 0.3s eas e;
+  --cellSize: 100px;
+  --markSize: calc(var(--cellSize) * .9);
 }
+
+/* LAYOUT */
 
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   width: 100vw;
   height: 100vh;
   background: var(--backgroundSecondary);
@@ -36,6 +41,8 @@ body {
 .container.hide {
   display: none;
 }
+
+/* FORM */
 
 .wrapper {
   display: flex;
@@ -48,6 +55,7 @@ body {
   display: flex;
   justify-content: center;
   color: var(--color);
+  margin-top: 20px;
   font-size: 64px;
   text-transform: uppercase;
 }
@@ -102,4 +110,91 @@ body {
   cursor: not-allowed;
   color: var(--background);
   border: 3px solid transparent;
+}
+
+/* GAMEBOARD */
+
+.gameboard {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  grid-template-columns: repeat(3, auto);
+  margin: 50px 0;
+}
+
+.gameboard.presentation > .cell {
+  cursor: inherit;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--cellSize);
+  height: var(--cellSize);
+  border: 2px solid var(--color);
+  cursor: pointer;
+}
+
+.cell.x, .cell.o {
+  cursor: not-allowed;
+}
+
+.cell.x::before,
+.cell.x::after,
+.cell.o::before,
+.cell.o::after {
+  background-color: var(--color);
+}
+
+.gameboard.x .cell:not(.x):not(.o):hover::before,
+.gameboard.x .cell:not(.x):not(.o):hover::after,
+.gameboard.o .cell:not(.x):not(.o):hover::before,
+.gameboard.o .cell:not(.x):not(.o):hover::after  {
+  background-color: var(--disabled);
+}
+
+.cell.x::before,
+.cell.x::after,
+.gameboard.x .cell:not(.x):not(.o):hover::before,
+.gameboard.x .cell:not(.x):not(.o):hover::after {
+  position: absolute;
+  content: '';
+  width: calc(var(--markSize) * .15);
+  height: var(--markSize);
+}
+
+.cell.x::before,
+.gameboard.x .cell:not(.x):not(.o):hover::before {
+  transform: rotate(45deg);
+}
+
+.cell.x::after,
+.gameboard.x .cell:not(.x):not(.o):hover::after {
+  transform: rotate(-45deg);
+}
+
+.cell.o::before,
+.cell.o::after,
+.gameboard.o .cell:not(.x):not(.o):hover::before,
+.gameboard.o .cell:not(.x):not(.o):hover::after {
+  position: absolute;
+  content: '';
+  border-radius: 100%;
+}
+
+.cell.o::after,
+.gameboard.o .cell:not(.x):not(.o):hover::after {
+  width: calc(var(--markSize) * .7);
+  height: calc(var(--markSize) * .7);
+  background-color: var(--backgroundSecondary);
+  z-index: 2;
+}
+
+.cell.o::before,
+.gameboard.o .cell:not(.x):not(.o):hover::before {
+  width: var(--markSize);
+  height: var(--markSize);
 }

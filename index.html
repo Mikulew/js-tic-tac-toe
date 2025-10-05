@@ -18,9 +18,19 @@
   <body>
     <section id="menu" class="container">
       <h1 class="title">Tic Tac Toe</h1>
-      <h2 class="title">
-        XOX<br/>OXO<br/>XOX
-      </h2>
+        <div class="wrapper">
+          <div class="gameboard presentation">
+            <div class="cell x"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell o"></div>
+            <div class="cell o"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell x"></div>
+          </div>
+        </div>
       <div class="wrapper">
         <div class="wrapper action-wrapper">
           <button id="secondPlayer" class="action-button">2 player game</button>
@@ -29,10 +39,21 @@
       </div>
     </section>
 
-    </section>
     <section id="gameboard" class="container hide">
       <h1 class="title">Your turn</h1>
-      <p>Work in progress</p>
+      <div class="wrapper">
+          <div class="gameboard x">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+          </div>
+        </div>
       <div class="wrapper action-wrapper">
         <button id="abortGame" class="action-button">Abort game</button>
       </div>
