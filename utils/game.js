@@ -9,7 +9,7 @@ import {
   MARK,
 } from "../consts/index.js";
 
-const cellElements = document.querySelectorAll("[data-cell]");
+let cellElements = document.querySelectorAll("[data-cell]");
 const gameboard = document.getElementById("playground");
 let title = document.getElementsByClassName("turn-title")[0];
 let currentMark = CLASS_NAME[MARK.CROSS];
@@ -22,20 +22,33 @@ export const initGame = () => {
   gameStatus = GAME_STATUS.CROSS_TURN;
   changeTitle();
   gameboard.classList.add(currentMark);
+  cellElements.forEach(cellElement => {
+    const newCell = cellElement.cloneNode(true);
+    cellElement.parentNode.replaceChild(newCell, cellElement);
+  });
+  cellElements = document.querySelectorAll("[data-cell]");
+
   cellElements.forEach((cellElement, index) => {
+    cellElement.classList.remove(CLASS_NAME[MARK.CROSS]);
+    cellElement.classList.remove(CLASS_NAME[MARK.NAUGHT]);
     cellElement.addEventListener('click', e => handleClick(e, index), { once: true });
   });
-};
+}
 
 export const abortGame = () => {
   cells = ["", "", "", "", "", "", "", "", ""];
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
   cellElements.forEach(cellElement => {
+    const newCell = cellElement.cloneNode(true);
+    cellElement.parentNode.replaceChild(newCell, cellElement);
+  });
+  cellElements = document.querySelectorAll("[data-cell]");
+
+  cellElements.forEach(cellElement => {
     cellElement.classList.remove(CLASS_NAME[MARK.CROSS]);
     cellElement.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   });
-  removeClickHandlers();
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
 };
@@ -60,7 +73,6 @@ function handleClick(e, index) {
     changeTitle();
   }
 }
-
 
 function changeValue(index, value) {
   cells[index] = value;
@@ -117,11 +129,4 @@ function endGame(mark) {
   changeTitle();
   gameboard.classList.remove(getOppositeMark(mark));
   gameboard.classList.add('presentation');
-}
-
-function removeClickHandlers() { 
-  cellElements.forEach(cellElement => {
-    cellElement.classList.remove(CLASS_NAME[MARK.CROSS]);
-    cellElement.classList.remove(CLASS_NAME[MARK.NAUGHT]);
-  })
 }
