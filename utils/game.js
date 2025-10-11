@@ -35,7 +35,7 @@ export const initGame = () => {
   });
 }
 
-export const abortGame = () => {
+export const restartGame = () => {
   cells = ["", "", "", "", "", "", "", "", ""];
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
