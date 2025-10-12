@@ -19,7 +19,7 @@
 
 ## Demo
 
-WIP
+[See here](https://mikulew.github.io/js-tic-tac-toe/)
 
 ## Resources
 
