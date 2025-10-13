@@ -1,17 +1,22 @@
 import {
+  HTML_ELEMENTS,
   CLASS_NAME,
-  CROSS_TITLE,
-  NAUGHT_TITLE,
-  DRAW_TITLE,
-  WINNER_TITLE,
   WINNING_COMBINATIONS,
   GAME_STATUS,
   MARK,
 } from "../consts/index.js";
+import {
+  getHTMLElement,
+  getTitle,
+  getOppositeMark,
+  refreshHTMLElement,
+  getEmptyMark,
+} from "./getters.js";
 
-let cellElements = document.querySelectorAll("[data-cell]");
-const gameboard = document.getElementById("playground");
-let title = document.getElementsByClassName("turn-title")[0];
+const gameboard = getHTMLElement(HTML_ELEMENTS.PLAYGROUND);
+let cellElements = getHTMLElement(HTML_ELEMENTS.CELLS);
+let title = getHTMLElement(HTML_ELEMENTS.TITLE);
+
 let currentMark = CLASS_NAME[MARK.CROSS];
 let gameStatus = GAME_STATUS.CROSS_TURN;
 let cells = ["", "", "", "", "", "", "", "", ""];
@@ -20,35 +25,19 @@ export const initGame = () => {
   cells = ["", "", "", "", "", "", "", "", ""];
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
-  changeTitle();
+  changeTitle(gameStatus);
   gameboard.classList.add(currentMark);
-  cellElements.forEach(cellElement => {
-    const newCell = cellElement.cloneNode(true);
-    cellElement.parentNode.replaceChild(newCell, cellElement);
-  });
-  cellElements = document.querySelectorAll("[data-cell]");
-
-  cellElements.forEach((cellElement, index) => {
-    cellElement.classList.remove(CLASS_NAME[MARK.CROSS]);
-    cellElement.classList.remove(CLASS_NAME[MARK.NAUGHT]);
-    cellElement.addEventListener('click', e => handleClick(e, index), { once: true });
-  });
+  cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
+  getEmptyMark(cellElements);
+  cellElements.forEach((cellElement, index) => cellElement.addEventListener('click', e => handleClick(e, index), { once: true }));
 }
 
 export const restartGame = () => {
   cells = ["", "", "", "", "", "", "", "", ""];
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
-  cellElements.forEach(cellElement => {
-    const newCell = cellElement.cloneNode(true);
-    cellElement.parentNode.replaceChild(newCell, cellElement);
-  });
-  cellElements = document.querySelectorAll("[data-cell]");
-
-  cellElements.forEach(cellElement => {
-    cellElement.classList.remove(CLASS_NAME[MARK.CROSS]);
-    cellElement.classList.remove(CLASS_NAME[MARK.NAUGHT]);
-  });
+  cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
+  cellElements = getEmptyMark(cellElements)
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
 };
@@ -70,7 +59,7 @@ function handleClick(e, index) {
     }
     gameStatus = getOppositeMark(mark) === CLASS_NAME[MARK.NAUGHT] ? GAME_STATUS.NAUGHT_TURN : GAME_STATUS.CROSS_TURN;
     changeMark(getOppositeMark(mark));
-    changeTitle();
+    changeTitle(gameStatus);
   }
 }
 
@@ -82,34 +71,12 @@ function changeMark(newMark) {
   return currentMark = newMark; 
 }
 
-function changeTitle() {
-  title.textContent = getTitle();
-}
-
-function getTitle() {
-  switch(gameStatus) {
-    case GAME_STATUS.CROSS_TURN:
-      return CROSS_TITLE;
-    case GAME_STATUS.NAUGHT_TURN:
-      return NAUGHT_TITLE;
-    case GAME_STATUS.CROSS_WINS:
-      return WINNER_TITLE(MARK.CROSS);
-    case GAME_STATUS.NAUGHT_WINS:
-      return WINNER_TITLE(MARK.NAUGHT);
-    case GAME_STATUS.DRAW:
-      return DRAW_TITLE;
-    default:
-      return CROSS_TITLE;
-  }
-}
-
-function getOppositeMark(mark) {
-  return mark === CLASS_NAME[MARK.CROSS] ? CLASS_NAME[MARK.NAUGHT] : CLASS_NAME[MARK.CROSS]; 
+function changeTitle(status) {
+  title.textContent = getTitle(status);
 }
 
 function changeClass(cell, mark) {
-  cell.classList.remove(CLASS_NAME[MARK.CROSS]);
-  cell.classList.remove(CLASS_NAME[MARK.NAUGHT]);
+  getEmptyMark(cell);
   cell.classList.add(mark);
   gameboard.classList.remove(mark);
   gameboard.classList.add(getOppositeMark(mark));
@@ -126,7 +93,7 @@ function isDraw() {
 }
 
 function endGame(mark) {
-  changeTitle();
+  changeTitle(gameStatus);
   gameboard.classList.remove(getOppositeMark(mark));
   gameboard.classList.add('presentation');
 }
