@@ -19,7 +19,7 @@ let title = getHTMLElement(HTML_ELEMENTS.TITLE);
 
 let currentMark = CLASS_NAME[MARK.CROSS];
 let gameStatus = GAME_STATUS.CROSS_TURN;
-let cells = ["", "", "", "", "", "", "", "", ""];
+let cells = Array(9).fill("");
 
 export const initGame = () => {
   cells = ["", "", "", "", "", "", "", "", ""];
@@ -33,42 +33,48 @@ export const initGame = () => {
 }
 
 export const restartGame = () => {
-  cells = ["", "", "", "", "", "", "", "", ""];
-  currentMark = CLASS_NAME[MARK.CROSS];
-  gameStatus = GAME_STATUS.CROSS_TURN;
+  resetState();
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
-  cellElements = getEmptyMark(cellElements)
+  getEmptyMark(cellElements)
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
 };
 
+function resetState() {
+  cells = Array(9).fill("");
+  currentMark = CLASS_NAME[MARK.CROSS];
+  gameStatus = GAME_STATUS.CROSS_TURN;
+}
+
 function handleClick(e, index) {
-  if (gameStatus === GAME_STATUS.NAUGHT_TURN || gameStatus === GAME_STATUS.CROSS_TURN) {
-    e.stopPropagation();
-    const cell = e.target;
-    const mark = currentMark;
-    changeValue(index, mark);
-    changeClass(cell, mark);
-    if (checkWin(mark)) {
-      const wonMark = mark === CLASS_NAME[MARK.CROSS] ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS; 
-      gameStatus = wonMark;
-      return endGame(mark);
-    } else if (isDraw()) {
-      gameStatus = GAME_STATUS.DRAW;
-      return endGame(mark);
-    }
-    gameStatus = getOppositeMark(mark) === CLASS_NAME[MARK.NAUGHT] ? GAME_STATUS.NAUGHT_TURN : GAME_STATUS.CROSS_TURN;
-    changeMark(getOppositeMark(mark));
-    changeTitle(gameStatus);
+  if (gameStatus !== GAME_STATUS.CROSS_TURN && gameStatus !== GAME_STATUS.NAUGHT_TURN) return;
+
+  e.stopPropagation();
+  const cell = e.target;
+  const mark = currentMark;
+  changeValue(index, mark);
+  changeClass(cell, mark);
+
+  if (checkWin(mark)) {
+    gameStatus = mark === CLASS_NAME[MARK.CROSS] ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
+    endGame(mark);
+    return;
   }
+  
+  if (isDraw()) {
+    gameStatus = GAME_STATUS.DRAW;
+    endGame(mark);
+    return;
+  }
+
+  currentMark = getOppositeMark(mark);
+  gameStatus = currentMark === CLASS_NAME[MARK.NAUGHT] ? GAME_STATUS.NAUGHT_TURN : GAME_STATUS.CROSS_TURN;
+  changeTitle(gameStatus);
+
 }
 
 function changeValue(index, value) {
   cells[index] = value;
-}
-
-function changeMark(newMark) {
-  return currentMark = newMark; 
 }
 
 function changeTitle(status) {
