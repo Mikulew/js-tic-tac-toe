@@ -70,7 +70,7 @@ function handleClick(e, index) {
   currentMark = getOppositeMark(mark);
   gameStatus = currentMark === CLASS_NAME[MARK.NAUGHT] ? GAME_STATUS.NAUGHT_TURN : GAME_STATUS.CROSS_TURN;
   changeTitle(gameStatus);
-
+  return;
 }
 
 function changeValue(index, value) {

@@ -18,8 +18,8 @@ export const initMenu = () => {
   computerPlayerButton.addEventListener('click', () => console.log('Hello from second button!'));
   abortGameButton.addEventListener('click', () => {
     restartGame();
-    gameboardSection.classList.add('hide');
     menuSection.classList.remove('hide');
+    gameboardSection.classList.add('hide');
   });
   restartGameButton.addEventListener('click', () => {
     restartGame();

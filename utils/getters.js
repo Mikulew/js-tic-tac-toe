@@ -7,7 +7,7 @@ import {
 } from "../consts/index.js";
 import { isArrayLike } from "./utilities.js";
 
-const elements = {
+const DOM_ELEMENTS = {
   [HTML_ELEMENTS.MENU_VIEW]: document.getElementById("menu"),
   [HTML_ELEMENTS.GAMEBOARD_VIEW]: document.getElementById("gameboard"),
   [HTML_ELEMENTS.SECOND_PLAYER_BUTTON]: document.getElementById("secondPlayer"),
@@ -28,18 +28,18 @@ export function getOppositeMark(mark) {
 }
 
 export function getHTMLElement(element) {
-  return elements[element];
+  return DOM_ELEMENTS[element];
 }
 
 export function refreshHTMLElement(element) {
   switch(element) {
     case HTML_ELEMENTS.CELLS: {
-      elements[element].forEach(cellElement => {
+      DOM_ELEMENTS[element].forEach(cellElement => {
         const newCell = cellElement.cloneNode(true);
         cellElement.parentNode.replaceChild(newCell, cellElement);
       });
-      elements[element] = document.querySelectorAll("[data-cell]");
-      return elements[element];
+      DOM_ELEMENTS[element] = document.querySelectorAll("[data-cell]");
+      return DOM_ELEMENTS[element];
     }
     default:
       return new Error("Unsupported HTML element");
