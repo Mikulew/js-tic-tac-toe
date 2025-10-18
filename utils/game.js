@@ -21,8 +21,8 @@ let currentMark = CLASS_NAME[MARK.CROSS];
 let gameStatus = GAME_STATUS.CROSS_TURN;
 let cells = Array(9).fill("");
 
-export const initGame = () => {
-  cells = ["", "", "", "", "", "", "", "", ""];
+export function initGame() {
+  cells = Array(9).fill("");
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
   changeTitle(gameStatus);
@@ -32,7 +32,7 @@ export const initGame = () => {
   cellElements.forEach((cellElement, index) => cellElement.addEventListener('click', e => handleClick(e, index), { once: true }));
 }
 
-export const restartGame = () => {
+export function restartGame() {
   resetState();
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
   getEmptyMark(cellElements)

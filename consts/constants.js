@@ -1,0 +1,35 @@
+import { GAME_STATUS } from "./enums.js";
+
+export const CROSS_CLASS = "x";
+export const NAUGHT_CLASS = "o";
+
+export const MARK = {
+  CROSS: "X",
+  NAUGHT: "O",
+};
+
+export const CLASS_NAME = {
+  [MARK.CROSS]: CROSS_CLASS,
+  [MARK.NAUGHT]: NAUGHT_CLASS,
+};
+
+export const WINNING_COMBINATIONS = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+  [0, 4, 8], [2, 4, 6],            // Diagonals
+];
+
+export const TITLES = {
+  [GAME_STATUS.CROSS_TURN]: "X's turn",
+  [GAME_STATUS.NAUGHT_TURN]: "O's turn",
+  [GAME_STATUS.DRAW]: "This is a draw!",
+  WINNER: mark => `${mark} is a winner!`,
+};
+
+export const GAME_TITLE = {
+  [GAME_STATUS.CROSS_TURN]: TITLES.CROSS_TURN,
+  [GAME_STATUS.NAUGHT_TURN]: TITLES.NAUGHT_TURN,
+  [GAME_STATUS.CROSS_WINS]: TITLES.WINNER(MARK.CROSS),
+  [GAME_STATUS.NAUGHT_WINS]: TITLES.WINNER(MARK.NAUGHT),
+  [GAME_STATUS.DRAW]: TITLES.DRAW,
+};

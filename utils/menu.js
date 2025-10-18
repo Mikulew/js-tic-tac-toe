@@ -9,7 +9,7 @@ const computerPlayerButton = getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON
 const abortGameButton = getHTMLElement(HTML_ELEMENTS.ABORT_GAME_BUTTON);
 const restartGameButton = getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON);
 
-export const initMenu = () => {
+export function initMenu() {
   secondPlayerButton.addEventListener('click', () => {
     initGame();
     menuSection.classList.add('hide');

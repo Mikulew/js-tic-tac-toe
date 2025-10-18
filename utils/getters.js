@@ -5,7 +5,6 @@ import {
   MARK,
   HTML_ELEMENTS,
 } from "../consts/index.js";
-import { isArrayLike } from "./utilities.js";
 
 const DOM_ELEMENTS = {
   [HTML_ELEMENTS.MENU_VIEW]: document.getElementById("menu"),
@@ -47,13 +46,18 @@ export function refreshHTMLElement(element) {
 }
 
 export function getEmptyMark(element) {
-  if (isArrayLike(element)) {
-    [...element].forEach(e => {
+  const isCollection =
+    Object.prototype.toString.call(element) === '[object NodeList]' ||
+    Object.prototype.toString.call(element) === '[object HTMLCollection]';
+
+  if (isCollection) {
+    Array.from(element).forEach(e => {
       e.classList.remove(CLASS_NAME[MARK.CROSS]);
       e.classList.remove(CLASS_NAME[MARK.NAUGHT]);
     });
     return element;
   }
+
   element.classList.remove(CLASS_NAME[MARK.CROSS]);
   element.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   return element;
