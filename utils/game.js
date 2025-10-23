@@ -20,6 +20,7 @@ let title = getHTMLElement(HTML_ELEMENTS.TITLE);
 let currentMark = CLASS_NAME[MARK.CROSS];
 let gameStatus = GAME_STATUS.CROSS_TURN;
 let cells = Array(9).fill("");
+let delegatedClickHandler = null;
 
 export function initGame() {
   cells = Array(9).fill("");
@@ -29,7 +30,14 @@ export function initGame() {
   gameboard.classList.add(currentMark);
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
   getEmptyMark(cellElements);
-  cellElements.forEach((cellElement, index) => cellElement.addEventListener('click', e => handleClick(e, index), { once: true }));
+
+  if (delegatedClickHandler) {
+    gameboard.removeEventListener("click", delegatedClickHandler);
+    delegatedClickHandler = null;
+  }
+
+  delegatedClickHandler = handleDelegatedClick;
+  gameboard.addEventListener("click", delegatedClickHandler);
 }
 
 export function restartGame() {
@@ -44,6 +52,16 @@ function resetState() {
   cells = Array(9).fill("");
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
+}
+
+function handleDelegatedClick(e) {
+  const cell = e.target.closest("[data-cell]");
+  if (!cell || !gameboard.contains(cell)) return;
+
+  const index = Array.from(cellElements).indexOf(cell);
+  if (index === -1) return;
+  if (cells[index] !== "") return;
+  handleClick(e, index);
 }
 
 function handleClick(e, index) {
