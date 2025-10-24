@@ -119,5 +119,5 @@ function isDraw() {
 function endGame(mark) {
   changeTitle(gameStatus);
   gameboard.classList.remove(getOppositeMark(mark));
-  gameboard.classList.add('presentation');
+  gameboard.classList.add("presentation");
 }

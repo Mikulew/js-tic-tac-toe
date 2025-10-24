@@ -9,8 +9,11 @@ import {
 const DOM_ELEMENTS = {
   [HTML_ELEMENTS.MENU_VIEW]: document.getElementById("menu"),
   [HTML_ELEMENTS.GAMEBOARD_VIEW]: document.getElementById("gameboard"),
+  [HTML_ELEMENTS.SETTINGS_VIEW]: document.getElementById("settings"),
   [HTML_ELEMENTS.SECOND_PLAYER_BUTTON]: document.getElementById("secondPlayer"),
   [HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON]: document.getElementById("computerPlayer"),
+  [HTML_ELEMENTS.CANCEL_BUTTON]: document.getElementById("cancel"),
+  [HTML_ELEMENTS.PLAY_BUTTON]: document.getElementById("playGame"),
   [HTML_ELEMENTS.ABORT_GAME_BUTTON]: document.getElementById("abortGame"),
   [HTML_ELEMENTS.RESTART_GAME_BUTTON]: document.getElementById("restartGame"),
   [HTML_ELEMENTS.PLAYGROUND]: document.getElementById("playground"),
@@ -47,8 +50,8 @@ export function refreshHTMLElement(element) {
 
 export function getEmptyMark(element) {
   const isCollection =
-    Object.prototype.toString.call(element) === '[object NodeList]' ||
-    Object.prototype.toString.call(element) === '[object HTMLCollection]';
+    Object.prototype.toString.call(element) === "[object NodeList]" ||
+    Object.prototype.toString.call(element) === "[object HTMLCollection]";
 
   if (isCollection) {
     Array.from(element).forEach(e => {

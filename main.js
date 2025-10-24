@@ -1,3 +1,3 @@
-import { initMenu } from './utils/menu.js';
+import { initMenu } from "./utils/menu.js";
 
 initMenu();
