@@ -18,6 +18,7 @@
   <body>
     <section id="menu" class="container">
       <h1 class="title">Tic Tac Toe</h1>
+
         <div class="wrapper">
           <div class="gameboard presentation">
             <div class="cell x"></div>
@@ -30,7 +31,8 @@
             <div class="cell"></div>
             <div class="cell x"></div>
           </div>
-        </div>
+      </div>
+
       <div class="wrapper">
         <div class="wrapper action-wrapper">
           <button id="secondPlayer" class="action-button">2 player game</button>
@@ -41,19 +43,21 @@
 
     <section id="gameboard" class="container hide">
       <h1 class="title turn-title ">X's turn</h1>
+
       <div class="wrapper">
-          <div id="playground" class="gameboard x">
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-            <div class="cell" data-cell></div>
-          </div>
+        <div id="playground" class="gameboard x">
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
+          <div class="cell" data-cell></div>
         </div>
+      </div>
+
       <div class="wrapper action-wrapper">
         <button id="abortGame" class="action-button">Abort game</button>
         <button id="restartGame" class="action-button">Restart game</button>
@@ -62,6 +66,25 @@
 
     <section id="settings" class="container hide">
       <h1 class="title">Game settings</h1>
+
+      <div id="form" class="settings-form">
+        <h2 class="subtitle">Designate a mark</h2>
+        <select class="select" name="select">
+          <option class="option">X – cross</option>
+          <option class="option">O – naught</option>
+        </select>
+        <h2 class="subtitle">First move</h2>
+        <select class="select" name="select">
+          <option class="option">Player</option>
+          <option class="option">Computer</option>
+        </select>
+        <h2 class="subtitle">Game difficulty</h2>
+        <select class="select" name="select">
+          <option class="option">1 – basic</option>
+          <option class="option">2 – advanced</option>
+        </select>
+      </div>
+
       <div class="wrapper">
         <div class="wrapper action-wrapper">
           <button id="cancel" class="action-button">Cancel</button>
