@@ -4,6 +4,7 @@ import {
   GAME_STATUS,
   MARK,
   HTML_ELEMENTS,
+  GAME_DEFAULT_SETTINGS,
 } from "../consts/index.js";
 
 const DOM_ELEMENTS = {
@@ -19,6 +20,9 @@ const DOM_ELEMENTS = {
   [HTML_ELEMENTS.PLAYGROUND]: document.getElementById("playground"),
   [HTML_ELEMENTS.CELLS]: document.querySelectorAll("[data-cell]"),
   [HTML_ELEMENTS.TITLE]: document.getElementsByClassName("turn-title")[0],
+  [HTML_ELEMENTS.SELECTED_MARK]: document.getElementById("selectedMark"),
+  [HTML_ELEMENTS.FIRST_MOVE]: document.getElementById("firstMove"),
+  [HTML_ELEMENTS.GAME_DIFFICULTY]: document.getElementById("gameDifficulty"),
 };
 
 export function getTitle(status) {
@@ -43,6 +47,15 @@ export function refreshHTMLElement(element) {
       DOM_ELEMENTS[element] = document.querySelectorAll("[data-cell]");
       return DOM_ELEMENTS[element];
     }
+    case HTML_ELEMENTS.SELECTED_MARK:
+    case HTML_ELEMENTS.FIRST_MOVE:
+    case HTML_ELEMENTS.GAME_DIFFICULTY:
+      const oldNode = DOM_ELEMENTS[element];
+      if (!oldNode || !oldNode.parentNode) return null;
+      const newNode = oldNode.cloneNode(true);
+      oldNode.parentNode.replaceChild(newNode, oldNode);
+      DOM_ELEMENTS[element] = newNode;
+      return newNode;
     default:
       return new Error("Unsupported HTML element");
   }
@@ -64,4 +77,10 @@ export function getEmptyMark(element) {
   element.classList.remove(CLASS_NAME[MARK.CROSS]);
   element.classList.remove(CLASS_NAME[MARK.NAUGHT]);
   return element;
+}
+
+export function refreshGameSettings(settings) {
+  for (let [key] of settings) {
+    settings[key] = GAME_DEFAULT_SETTINGS[key];
+  }
 }
