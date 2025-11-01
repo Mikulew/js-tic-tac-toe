@@ -5,6 +5,7 @@ import {
   MARK,
   HTML_ELEMENTS,
   GAME_DEFAULT_SETTINGS,
+  SELECT_NAMES,
 } from "../consts/index.js";
 
 const DOM_ELEMENTS = {
@@ -83,4 +84,8 @@ export function refreshGameSettings(settings) {
   for (let [key] of settings) {
     settings[key] = GAME_DEFAULT_SETTINGS[key];
   }
+}
+
+export function getSelectedKeyName(keyName) {
+  return SELECT_NAMES[keyName];
 }

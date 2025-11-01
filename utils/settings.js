@@ -1,5 +1,10 @@
 import { HTML_ELEMENTS, GAME_SETTINGS } from "../consts/index.js";
-import { getHTMLElement, refreshGameSettings, refreshHTMLElement } from "./getters.js";
+import {
+  getHTMLElement,
+  getSelectedKeyName,
+  refreshGameSettings,
+  refreshHTMLElement,
+} from "./getters.js";
 
 const menuSection = getHTMLElement(HTML_ELEMENTS.MENU_VIEW);
 const settingsSection = getHTMLElement(HTML_ELEMENTS.SETTINGS_VIEW);
@@ -31,5 +36,6 @@ function handlePlay() {
 }
 
 function getSelectedOption(e) {
-  GAME_SETTINGS[e.target.name] = e.target.value;
+  const settingsKey = getSelectedKeyName(e.target.name);
+  GAME_SETTINGS[settingsKey] = e.target.value;
 }

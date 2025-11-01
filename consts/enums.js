@@ -29,3 +29,9 @@ export const SETTINGS_OPTION_TYPES = {
   FIRST_MOVE: "FIRST_MOVE",
   GAME_DIFFICULTY: "GAME_DIFFICULTY",
 };
+
+export const SELECT_NAMES = {
+  selectedMark: "SELECTED_MARK",
+  firstMove: "FIRST_MOVE",
+  gameDifficulty: "GAME_DIFFICULTY",
+};
