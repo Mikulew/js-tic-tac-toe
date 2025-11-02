@@ -12,19 +12,27 @@ const computerPlayerButton = getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON
 export function initMenu() {
   secondPlayerButton.addEventListener("click", () => {
     initGame(PLAY_MODE.WITH_PLAYER);
-    menuSection.classList.add("hide");
-    gameboardSection.classList.remove("hide");
+    hideMenuInvokedBySecondPlayerButton();
   });
   computerPlayerButton.addEventListener("click", () => {
     initSettings();
-    menuSection.classList.add("hide");
-    settingsSection.classList.remove("hide");
+    hideMenuInvokedByComputerPlayerButton();
   });
 }
 
-export function hideMenu() {
+export function hideGameboard() {
   menuSection.classList.remove("hide");
   gameboardSection.classList.add("hide");
+}
+
+function hideMenuInvokedBySecondPlayerButton() {
+  menuSection.classList.add("hide");
+  gameboardSection.classList.remove("hide");
+}
+
+function hideMenuInvokedByComputerPlayerButton() {
+  menuSection.classList.add("hide");
+  settingsSection.classList.remove("hide");
 }
 
 export function hideSettingsInvokedByCancelButton() {

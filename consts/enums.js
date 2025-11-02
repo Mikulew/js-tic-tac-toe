@@ -31,9 +31,9 @@ export const SETTINGS_OPTION_TYPES = {
 };
 
 export const SELECT_NAMES = {
-  selectedMark: "SELECTED_MARK",
-  firstMove: "FIRST_MOVE",
-  gameDifficulty: "GAME_DIFFICULTY",
+  selectedMark: SETTINGS_OPTION_TYPES.SELECTED_MARK,
+  firstMove: SETTINGS_OPTION_TYPES.FIRST_MOVE,
+  gameDifficulty: SETTINGS_OPTION_TYPES.GAME_DIFFICULTY,
 };
 
 export const PLAY_MODE = {
