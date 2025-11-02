@@ -4,17 +4,18 @@ import {
   PLAY_MODE,
   SETTINGS_OPTION_TYPES,
 } from "../consts/index.js";
+import { initGame } from "./game.js";
+import {
+  hideSettingsInvokedByCancelButton,
+  hideSettingsInvokedByPlayButton,
+} from "./menu.js";
 import {
   getHTMLElement,
   getSelectedKeyName,
   refreshGameSettings,
   refreshHTMLElement,
 } from "./getters.js";
-import { initGame } from "./game.js";
 
-const menuSection = getHTMLElement(HTML_ELEMENTS.MENU_VIEW);
-const settingsSection = getHTMLElement(HTML_ELEMENTS.SETTINGS_VIEW);
-const gameboardSection = getHTMLElement(HTML_ELEMENTS.GAMEBOARD_VIEW);
 const cancelButton = getHTMLElement(HTML_ELEMENTS.CANCEL_BUTTON);
 const playButton = getHTMLElement(HTML_ELEMENTS.PLAY_BUTTON);
 let selectedMarkOption = getHTMLElement(HTML_ELEMENTS.SELECTED_MARK);
@@ -51,13 +52,11 @@ function checkSettingsPropertiesAreProvided(settings) {
 }
 
 function handleCancel() {
-  settingsSection.classList.add("hide");
-  menuSection.classList.remove("hide");
+  hideSettingsInvokedByCancelButton();
 }
 
 function handlePlay() {
-  settingsSection.classList.add("hide");
-  gameboardSection.classList.remove("hide");
+  hideSettingsInvokedByPlayButton();
   initGame(PLAY_MODE.WITH_COMPUTER, GAME_SETTINGS);
 }
 
