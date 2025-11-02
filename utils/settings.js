@@ -3,12 +3,10 @@ import {
   GAME_SETTINGS,
   PLAY_MODE,
   SETTINGS_OPTION_TYPES,
+  BUTTON_TYPES,
 } from "../consts/index.js";
 import { initGame } from "./game.js";
-import {
-  hideSettingsInvokedByCancelButton,
-  hideSettingsInvokedByPlayButton,
-} from "./menu.js";
+import { hideSettings } from "./menu.js";
 import {
   getHTMLElement,
   getSelectedKeyName,
@@ -52,11 +50,11 @@ function checkSettingsPropertiesAreProvided(settings) {
 }
 
 function handleCancel() {
-  hideSettingsInvokedByCancelButton();
+  hideSettings(BUTTON_TYPES.CANCEL);
 }
 
 function handlePlay() {
-  hideSettingsInvokedByPlayButton();
+  hideSettings(BUTTON_TYPES.PLAY);
   initGame(PLAY_MODE.WITH_COMPUTER, GAME_SETTINGS);
 }
 

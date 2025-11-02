@@ -1,4 +1,4 @@
-import { HTML_ELEMENTS, PLAY_MODE } from "../consts/index.js";
+import { BUTTON_TYPES, HTML_ELEMENTS, PLAY_MODE } from "../consts/index.js";
 import { initGame } from "./game.js";
 import { initSettings } from "./settings.js";
 import { getHTMLElement } from "./getters.js";
@@ -12,11 +12,11 @@ const computerPlayerButton = getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON
 export function initMenu() {
   secondPlayerButton.addEventListener("click", () => {
     initGame(PLAY_MODE.WITH_PLAYER);
-    hideMenuInvokedBySecondPlayerButton();
+    hideMenu(BUTTON_TYPES.SECOND_PLAYER);
   });
   computerPlayerButton.addEventListener("click", () => {
     initSettings();
-    hideMenuInvokedByComputerPlayerButton();
+    hideMenu(BUTTON_TYPES.COMPUTER_PLAYER);
   });
 }
 
@@ -25,22 +25,26 @@ export function hideGameboard() {
   gameboardSection.classList.add("hide");
 }
 
-function hideMenuInvokedBySecondPlayerButton() {
-  menuSection.classList.add("hide");
-  gameboardSection.classList.remove("hide");
-}
-
-function hideMenuInvokedByComputerPlayerButton() {
-  menuSection.classList.add("hide");
-  settingsSection.classList.remove("hide");
-}
-
-export function hideSettingsInvokedByCancelButton() {
+export function hideSettings(buttonType = null) {
+  if (buttonType === null) throw new Error("buttonType argument must be provided");
+  if (buttonType === BUTTON_TYPES.CANCEL) {
+    menuSection.classList.remove("hide");
+  } else if (buttonType === BUTTON_TYPES.PLAY) {
+    gameboardSection.classList.remove("hide");
+  } else {
+    throw new Error("Unsupported settings' button");
+  }
   settingsSection.classList.add("hide");
-  menuSection.classList.remove("hide");
 }
 
-export function hideSettingsInvokedByPlayButton() {
-  settingsSection.classList.add("hide");
-  gameboardSection.classList.remove("hide");
+function hideMenu(buttonType = null) {
+  if (buttonType === null) throw new Error("buttonType argument must be provided");
+  if (buttonType === BUTTON_TYPES.SECOND_PLAYER) {
+    gameboardSection.classList.remove("hide");
+  } else if (buttonType === BUTTON_TYPES.COMPUTER_PLAYER) {
+    settingsSection.classList.remove("hide");
+  } else {
+    throw new Error("Unsupported menu's button");
+  }
+  menuSection.classList.add("hide");
 }
