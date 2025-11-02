@@ -4,6 +4,8 @@ import {
   WINNING_COMBINATIONS,
   GAME_STATUS,
   MARK,
+  PLAY_MODE,
+  CROSS_CLASS,
 } from "../consts/index.js";
 import {
   getHTMLElement,
@@ -12,6 +14,7 @@ import {
   refreshHTMLElement,
   getEmptyMark,
 } from "./getters.js";
+import { checkSettingsValidation } from "./settings.js";
 
 const gameboard = getHTMLElement(HTML_ELEMENTS.PLAYGROUND);
 let cellElements = getHTMLElement(HTML_ELEMENTS.CELLS);
@@ -22,10 +25,15 @@ let gameStatus = GAME_STATUS.CROSS_TURN;
 let cells = Array(9).fill("");
 let delegatedClickHandler = null;
 
-export function initGame() {
+export function initGame(mode, settings = null) {
+  try {
+    invokeGameInitilization(mode, settings);
+  } catch (err) {
+    console.error('Error in function invokeGameInitilization:', err);
+    return;
+  }
+
   cells = Array(9).fill("");
-  currentMark = CLASS_NAME[MARK.CROSS];
-  gameStatus = GAME_STATUS.CROSS_TURN;
   changeTitle(gameStatus);
   gameboard.classList.add(currentMark);
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
@@ -52,6 +60,20 @@ function resetState() {
   cells = Array(9).fill("");
   currentMark = CLASS_NAME[MARK.CROSS];
   gameStatus = GAME_STATUS.CROSS_TURN;
+}
+
+function invokeGameInitilization(mode, settings) {
+  if (mode === PLAY_MODE.WITH_PLAYER) {
+    currentMark = CLASS_NAME[MARK.CROSS];
+    gameStatus = GAME_STATUS.CROSS_TURN;
+    return;
+  } if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
+    currentMark = settings.SELECTED_MARK;
+    gameStatus = currentMark === CROSS_CLASS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+    return;
+  } else {
+    throw new Error("Unsupported play mode");
+  }
 }
 
 function handleDelegatedClick(e) {

@@ -1,4 +1,4 @@
-import { HTML_ELEMENTS } from "../consts/index.js";
+import { HTML_ELEMENTS, PLAY_MODE } from "../consts/index.js";
 import { initGame, restartGame } from "./game.js";
 import { initSettings } from "./settings.js";
 import { getHTMLElement } from "./getters.js";
@@ -13,7 +13,7 @@ const restartGameButton = getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON);
 
 export function initMenu() {
   secondPlayerButton.addEventListener("click", () => {
-    initGame();
+    initGame(PLAY_MODE.WITH_PLAYER);
     menuSection.classList.add("hide");
     gameboardSection.classList.remove("hide");
   });
@@ -29,6 +29,6 @@ export function initMenu() {
   });
   restartGameButton.addEventListener("click", () => {
     restartGame();
-    initGame();
+    initGame(PLAY_MODE.WITH_PLAYER);
   });
 };

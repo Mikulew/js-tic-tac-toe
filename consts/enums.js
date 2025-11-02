@@ -35,3 +35,8 @@ export const SELECT_NAMES = {
   firstMove: "FIRST_MOVE",
   gameDifficulty: "GAME_DIFFICULTY",
 };
+
+export const PLAY_MODE = {
+  WITH_PLAYER: "WITH_PLAYER",
+  WITH_COMPUTER: "WITH_COMPUTER",
+};
