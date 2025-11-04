@@ -31,7 +31,11 @@ export function getTitle(status) {
 }
 
 export function getOppositeMark(mark) {
-  return mark === CLASS_NAME[MARK.CROSS] ? CLASS_NAME[MARK.NAUGHT] : CLASS_NAME[MARK.CROSS]; 
+  return mark === MARK.CROSS ? MARK.NAUGHT : MARK.CROSS; 
+}
+
+export function getClassName(mark) {
+  return mark === MARK.CROSS ? CLASS_NAME[MARK.CROSS] : CLASS_NAME[MARK.NAUGHT];
 }
 
 export function getHTMLElement(element) {
@@ -69,14 +73,14 @@ export function getEmptyMark(element) {
 
   if (isCollection) {
     Array.from(element).forEach(e => {
-      e.classList.remove(CLASS_NAME[MARK.CROSS]);
-      e.classList.remove(CLASS_NAME[MARK.NAUGHT]);
+      e.classList.remove(getClassName(MARK.CROSS));
+      e.classList.remove(getClassName(MARK.NAUGHT));
     });
     return element;
   }
 
-  element.classList.remove(CLASS_NAME[MARK.CROSS]);
-  element.classList.remove(CLASS_NAME[MARK.NAUGHT]);
+  element.classList.remove(getClassName(MARK.CROSS));
+  element.classList.remove(getClassName(MARK.NAUGHT));
   return element;
 }
 

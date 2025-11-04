@@ -49,3 +49,18 @@ export const BUTTON_TYPES = {
   RESTART: "RESTART",
   ABORT: "ABORT",
 };
+
+export const MARK_TYPES = {
+  X: "X",
+  O: "O",
+};
+
+export const TURN_TYPES = {
+  PLAYER: "PLAYER",
+  COMPUTER: "COMPUTER",
+};
+
+export const GAME_DIFFICULTY_TYPES = {
+  BASIC: "BASIC",
+  ADVANCED: "ADVANCED",
+};

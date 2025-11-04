@@ -1,11 +1,9 @@
 import {
   HTML_ELEMENTS,
-  CLASS_NAME,
   WINNING_COMBINATIONS,
   GAME_STATUS,
   MARK,
   PLAY_MODE,
-  CROSS_CLASS,
   GAME_SETTINGS,
 } from "../consts/index.js";
 import {
@@ -14,6 +12,7 @@ import {
   getOppositeMark,
   refreshHTMLElement,
   getEmptyMark,
+  getClassName,
 } from "./getters.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
@@ -24,9 +23,11 @@ const restartGameButton = getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON);
 let cellElements = getHTMLElement(HTML_ELEMENTS.CELLS);
 let title = getHTMLElement(HTML_ELEMENTS.TITLE);
 
-let currentMark = CLASS_NAME[MARK.CROSS];
+let currentMark = MARK.CROSS;
 let gameStatus = GAME_STATUS.CROSS_TURN;
 let currentMode = null;
+let currentTurn = null;
+let difficulty = null;
 let cells = Array(9).fill("");
 let cellClickHandler = null;
 let abortClickHandler = null;
@@ -52,30 +53,32 @@ export function restartGame() {
   resetState();
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
   getEmptyMark(cellElements)
-  gameboard.classList.remove(CLASS_NAME[MARK.NAUGHT]);
-  gameboard.classList.remove(CLASS_NAME[MARK.CROSS]);
+  gameboard.classList.remove(getClassName(MARK.NAUGHT));
+  gameboard.classList.remove(getClassName(MARK.CROSS));
   configureGameboard();
 };
 
 function resetState() {
   cells = Array(9).fill("");
-  currentMark = currentMode === PLAY_MODE.WITH_PLAYER ? CLASS_NAME[MARK.CROSS] : GAME_SETTINGS.SELECTED_MARK;
-  gameStatus = currentMode === PLAY_MODE.WITH_PLAYER ? GAME_STATUS.CROSS_TURN : (currentMark === CROSS_CLASS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN);
+  currentMark = currentMode === PLAY_MODE.WITH_PLAYER ? MARK.CROSS : GAME_SETTINGS.SELECTED_MARK;
+  gameStatus = currentMode === PLAY_MODE.WITH_PLAYER ? GAME_STATUS.CROSS_TURN : (currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN);
 }
 
 function configureGameboard() {
   changeTitle(gameStatus);
-  gameboard.classList.add(currentMark);
+  gameboard.classList.add(getClassName(currentMark));
 }
 
 function invokeGameInitilization(mode, settings) {
   if (mode === PLAY_MODE.WITH_PLAYER) {
-    currentMark = CLASS_NAME[MARK.CROSS];
+    currentMark = MARK.CROSS;
     gameStatus = GAME_STATUS.CROSS_TURN;
     return;
   } if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
     currentMark = settings.SELECTED_MARK;
-    gameStatus = currentMark === CROSS_CLASS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+    gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+    currentTurn = settings.FIRST_MOVE;
+    difficulty = settings.GAME_DIFFICULTY;
     return;
   } else {
     throw new Error("Unsupported play mode");
@@ -112,7 +115,7 @@ function handleClick(e, index) {
   changeClass(cell, mark);
 
   if (checkWin(mark)) {
-    gameStatus = mark === CLASS_NAME[MARK.CROSS] ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
+    gameStatus = mark === MARK.CROSS ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
     endGame(mark);
     return;
   }
@@ -124,7 +127,7 @@ function handleClick(e, index) {
   }
 
   currentMark = getOppositeMark(mark);
-  gameStatus = currentMark === CLASS_NAME[MARK.NAUGHT] ? GAME_STATUS.NAUGHT_TURN : GAME_STATUS.CROSS_TURN;
+  gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
   changeTitle(gameStatus);
   return;
 }
@@ -162,9 +165,9 @@ function changeTitle(status) {
 
 function changeClass(cell, mark) {
   getEmptyMark(cell);
-  cell.classList.add(mark);
-  gameboard.classList.remove(mark);
-  gameboard.classList.add(getOppositeMark(mark));
+  cell.classList.add(getClassName(mark));
+  gameboard.classList.remove(getClassName(mark));
+  gameboard.classList.add(getClassName(getOppositeMark(mark)));
 }
 
 function checkWin(mark) {
@@ -179,6 +182,6 @@ function isDraw() {
 
 function endGame(mark) {
   changeTitle(gameStatus);
-  gameboard.classList.remove(getOppositeMark(mark));
+  gameboard.classList.remove(getClassName(getOppositeMark(mark)));
   gameboard.classList.add("presentation");
 }
