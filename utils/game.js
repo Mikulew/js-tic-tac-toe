@@ -5,6 +5,7 @@ import {
   MARK,
   PLAY_MODE,
   GAME_SETTINGS,
+  TURN_TYPES,
 } from "../consts/index.js";
 import {
   getHTMLElement,
@@ -13,6 +14,8 @@ import {
   refreshHTMLElement,
   getEmptyMark,
   getClassName,
+  getRandomNumber,
+  getOppositeTurn,
 } from "./getters.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
@@ -37,7 +40,7 @@ export function initGame(mode, settings = null) {
   try {
     invokeGameInitilization(mode, settings);
   } catch (err) {
-    console.error('Error in function invokeGameInitilization:', err);
+    console.error("Error in function invokeGameInitilization:", err);
     return;
   }
 
@@ -47,14 +50,16 @@ export function initGame(mode, settings = null) {
   getEmptyMark(cellElements);
   configureEventListeners();
   configureGameboard();
+
+  if (currentMode === PLAY_MODE.WITH_COMPUTER && currentTurn === TURN_TYPES.COMPUTER) {
+    computerMoves(currentMark);
+  }
 }
 
 export function restartGame() {
   resetState();
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
   getEmptyMark(cellElements)
-  gameboard.classList.remove(getClassName(MARK.NAUGHT));
-  gameboard.classList.remove(getClassName(MARK.CROSS));
   configureGameboard();
 };
 
@@ -66,6 +71,8 @@ function resetState() {
 
 function configureGameboard() {
   changeTitle(gameStatus);
+  gameboard.classList.remove(getClassName(MARK.NAUGHT));
+  gameboard.classList.remove(getClassName(MARK.CROSS));
   gameboard.classList.add(getClassName(currentMark));
 }
 
@@ -74,7 +81,7 @@ function invokeGameInitilization(mode, settings) {
     currentMark = MARK.CROSS;
     gameStatus = GAME_STATUS.CROSS_TURN;
     return;
-  } if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
+  } else if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
     currentMark = settings.SELECTED_MARK;
     gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
     currentTurn = settings.FIRST_MOVE;
@@ -90,8 +97,8 @@ function handleCellClick(e) {
   if (!cell || !gameboard.contains(cell)) return;
 
   const index = Array.from(cellElements).indexOf(cell);
-  if (index === -1) return;
-  if (cells[index] !== "") return;
+  if (index === -1 || cells[index] !== "") return;
+
   handleClick(e, index);
 }
 
@@ -110,26 +117,7 @@ function handleClick(e, index) {
 
   e.stopPropagation();
   const cell = e.target;
-  const mark = currentMark;
-  changeValue(index, mark);
-  changeClass(cell, mark);
-
-  if (checkWin(mark)) {
-    gameStatus = mark === MARK.CROSS ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
-    endGame(mark);
-    return;
-  }
-  
-  if (isDraw()) {
-    gameStatus = GAME_STATUS.DRAW;
-    endGame(mark);
-    return;
-  }
-
-  currentMark = getOppositeMark(mark);
-  gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
-  changeTitle(gameStatus);
-  return;
+  makeMove(cell, currentMark, index);
 }
 
 function configureEventListeners() {
@@ -137,10 +125,12 @@ function configureEventListeners() {
     gameboard.removeEventListener("click", cellClickHandler);
     cellClickHandler = null;
   }
+
   if (abortClickHandler) {
     abortGameButton.removeEventListener("click", abortClickHandler);
     abortClickHandler = null;
   }
+
   if (restartClickHandler) {
     restartGameButton.removeEventListener("click", restartClickHandler);
     restartClickHandler = null;
@@ -170,10 +160,49 @@ function changeClass(cell, mark) {
   gameboard.classList.add(getClassName(getOppositeMark(mark)));
 }
 
+function changeTurn(mark) {
+  currentMark = getOppositeMark(mark);
+  gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+  changeTitle(gameStatus);
+}
+
+function makeMove(cell, mark, index) {
+  changeValue(index, mark);
+  changeClass(cell, mark);
+  checkGameStatus(mark);
+  if (currentMode === PLAY_MODE.WITH_COMPUTER) {
+    currentTurn = getOppositeTurn(currentTurn);
+    if (currentTurn === TURN_TYPES.COMPUTER) {
+      computerMoves(currentMark);
+    }
+  }
+}
+
+function checkGameStatus(mark) {
+  if (checkWin(mark)) {
+    gameStatus = mark === MARK.CROSS ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
+    endGame(mark);
+    return;
+  }
+  
+  if (isDraw()) {
+    gameStatus = GAME_STATUS.DRAW;
+    endGame(mark);
+    return;
+  }
+
+  changeTurn(mark);
+  return;
+}
+
 function checkWin(mark) {
   return WINNING_COMBINATIONS.some(
     combination => combination.every(index => cells[index] === mark)
   );
+}
+
+function checkCellIsMarked(index) {
+  return cells[index].length !== 0;
 }
 
 function isDraw() {
@@ -184,4 +213,16 @@ function endGame(mark) {
   changeTitle(gameStatus);
   gameboard.classList.remove(getClassName(getOppositeMark(mark)));
   gameboard.classList.add("presentation");
+}
+
+function computerMoves(mark) {
+  if (gameStatus !== GAME_STATUS.CROSS_TURN && gameStatus !== GAME_STATUS.NAUGHT_TURN) return;
+
+  let randomNumber = getRandomNumber(0, 8);
+  while (checkCellIsMarked(randomNumber)) {
+    randomNumber = getRandomNumber(0, 8);
+  }
+
+  const cell = cellElements[randomNumber];
+  makeMove(cell, mark, randomNumber);
 }

@@ -6,6 +6,7 @@ import {
   HTML_ELEMENTS,
   GAME_DEFAULT_SETTINGS,
   SELECT_NAMES,
+  TURN_TYPES,
 } from "../consts/index.js";
 
 const DOM_ELEMENTS = {
@@ -32,6 +33,10 @@ export function getTitle(status) {
 
 export function getOppositeMark(mark) {
   return mark === MARK.CROSS ? MARK.NAUGHT : MARK.CROSS; 
+}
+
+export function getOppositeTurn(turn) {
+  return turn === TURN_TYPES.COMPUTER ? TURN_TYPES.PLAYER : TURN_TYPES.COMPUTER;
 }
 
 export function getClassName(mark) {
@@ -92,4 +97,10 @@ export function refreshGameSettings(settings) {
 
 export function getSelectedKeyName(keyName) {
   return SELECT_NAMES[keyName];
+}
+
+export function getRandomNumber(minNum, maxNum) {
+  const min = Math.ceil(minNum);
+  const max = Math.floor(maxNum);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
