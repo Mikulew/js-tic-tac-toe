@@ -39,3 +39,5 @@ Articles and videos that I was inspired and used to write the base and how to so
 12. [Stackoverflow: HTML/JavaScript Tic Tac Toe with a 2D array](https://stackoverflow.com/questions/24350860/html-javascript-tic-tac-toe-with-a-2d-array)
 13. [Tic Tac Toe in JavaScript (Super Simple!)](https://www.youtube.com/watch?v=dtaZl_Uxzbo)
 14. [Build Tic Tac Toe With JavaScript - Tutorial](https://www.youtube.com/watch?v=Y-GkMjUZsmM)
+15. [Coding a Tic-Tac-Toe game](https://medium.com/@rferrandino.tokyo/coding-a-tic-tac-toe-game-1aa81e7e05c0)
+16. [How to Win Tic-Tac-Toe: The Strategies You Need to Master](https://www.rd.com/article/how-to-win-tic-tac-toe/)
