@@ -6,6 +6,7 @@ import {
   PLAY_MODE,
   GAME_SETTINGS,
   TURN_TYPES,
+  GAME_DIFFICULTY_TYPES,
 } from "../consts/index.js";
 import {
   getHTMLElement,
@@ -14,8 +15,9 @@ import {
   refreshHTMLElement,
   getEmptyMark,
   getClassName,
-  getRandomNumber,
   getOppositeTurn,
+  findRandomEmptyCell,
+  findWinningMove,
 } from "./getters.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
@@ -184,7 +186,7 @@ function checkGameStatus(mark) {
     endGame(mark);
     return;
   }
-  
+
   if (isDraw()) {
     gameStatus = GAME_STATUS.DRAW;
     endGame(mark);
@@ -201,10 +203,6 @@ function checkWin(mark) {
   );
 }
 
-function checkCellIsMarked(index) {
-  return cells[index].length !== 0;
-}
-
 function isDraw() {
   return cells.every(cell => cell.length !== 0);
 }
@@ -217,12 +215,31 @@ function endGame(mark) {
 
 function computerMoves(mark) {
   if (gameStatus !== GAME_STATUS.CROSS_TURN && gameStatus !== GAME_STATUS.NAUGHT_TURN) return;
+  const opponentMark = getOppositeMark(mark);
+  let moveIndex = -1;
 
-  let randomNumber = getRandomNumber(0, 8);
-  while (checkCellIsMarked(randomNumber)) {
-    randomNumber = getRandomNumber(0, 8);
+  if (difficulty === GAME_DIFFICULTY_TYPES.BASIC) {
+    moveIndex = findRandomEmptyCell();
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+    }
+  } else if (difficulty === GAME_DIFFICULTY_TYPES.ADVANCED) {
+    moveIndex = findWinningMove(mark);
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+      return;
+    }
+    moveIndex = findWinningMove(opponentMark);
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+      return;
+    }
+    moveIndex = findRandomEmptyCell();
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+    }
+  } else {
+    throw new Error("Unsupported game difficulty");
   }
-
-  const cell = cellElements[randomNumber];
-  makeMove(cell, mark, randomNumber);
 }
+

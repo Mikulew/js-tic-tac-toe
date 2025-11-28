@@ -99,8 +99,23 @@ export function getSelectedKeyName(keyName) {
   return SELECT_NAMES[keyName];
 }
 
-export function getRandomNumber(minNum, maxNum) {
-  const min = Math.ceil(minNum);
-  const max = Math.floor(maxNum);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+export function findRandomEmptyCell() {
+  const emptyCells = cells
+    .map((cell, index) => (cell === "" ? index : -1))
+    .filter(index => index !== -1);
+
+  if (emptyCells.length === 0) return -1;
+  return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+}
+
+export function findWinningMove(mark) {
+  for (const combination of WINNING_COMBINATIONS) {
+    const filledCells = combination.filter(index => cells[index] === mark);
+    const emptyCells = combination.filter(index => cells[index] === "");
+
+    if (filledCells.length === 2 && emptyCells.length === 1) {
+      return emptyCells[0];
+    }
+  }
+  return -1;
 }
