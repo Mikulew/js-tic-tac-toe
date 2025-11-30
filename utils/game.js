@@ -2,6 +2,7 @@ import {
   HTML_ELEMENTS,
   WINNING_COMBINATIONS,
   GAME_STATUS,
+  GAME_STATUS_TYPES,
   MARK,
   PLAY_MODE,
   GAME_SETTINGS,
@@ -18,6 +19,7 @@ import {
   getOppositeTurn,
   findRandomEmptyCell,
   findWinningMove,
+  getGameStatus,
 } from "./getters.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
@@ -67,8 +69,14 @@ export function restartGame() {
 
 function resetState() {
   cells = Array(9).fill("");
-  currentMark = currentMode === PLAY_MODE.WITH_PLAYER ? MARK.CROSS : GAME_SETTINGS.SELECTED_MARK;
-  gameStatus = currentMode === PLAY_MODE.WITH_PLAYER ? GAME_STATUS.CROSS_TURN : (currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN);
+  currentMark =
+    currentMode === PLAY_MODE.WITH_PLAYER
+      ? MARK.CROSS
+      : GAME_SETTINGS.SELECTED_MARK;
+  gameStatus =
+    currentMode === PLAY_MODE.WITH_PLAYER
+      ? GAME_STATUS.CROSS_TURN
+      : getGameStatus(currentMark, GAME_STATUS_TYPES.TURN);
 }
 
 function configureGameboard() {
@@ -83,19 +91,22 @@ function invokeGameInitilization(mode, settings) {
     currentMark = MARK.CROSS;
     gameStatus = GAME_STATUS.CROSS_TURN;
     return;
-  } else if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
+  }
+
+  if (mode === PLAY_MODE.WITH_COMPUTER && checkSettingsValidation(settings)) {
     currentMark = settings.SELECTED_MARK;
-    gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
     currentTurn = settings.FIRST_MOVE;
     difficulty = settings.GAME_DIFFICULTY;
+
+    gameStatus = getGameStatus(currentMark, GAME_STATUS_TYPES.TURN);
     return;
-  } else {
-    throw new Error("Unsupported play mode");
   }
+
+  throw new Error("Unsupported play mode");
 }
 
 function handleCellClick(e) {
-  const cell = e.target.closest("[data-cell]");
+  const cell = e.target?.closest?.("[data-cell]") ?? e.target;
   if (!cell || !gameboard.contains(cell)) return;
 
   const index = Array.from(cellElements).indexOf(cell);
@@ -118,8 +129,18 @@ function handleClick(e, index) {
   if (gameStatus !== GAME_STATUS.CROSS_TURN && gameStatus !== GAME_STATUS.NAUGHT_TURN) return;
 
   e.stopPropagation();
-  const cell = e.target;
+  const cell = e.target?.closest?.("[data-cell]") ?? e.target;
   makeMove(cell, currentMark, index);
+}
+
+function configureGameListeners() {
+  cellClickHandler = handleCellClick;
+  abortClickHandler = handleAbortClick;
+  restartClickHandler = handleRestartClick;
+
+  gameboard.addEventListener("click", cellClickHandler);
+  abortGameButton.addEventListener("click", abortClickHandler);
+  restartGameButton.addEventListener("click", restartClickHandler);
 }
 
 function configureEventListeners() {
@@ -138,13 +159,7 @@ function configureEventListeners() {
     restartClickHandler = null;
   }
 
-  cellClickHandler = handleCellClick;
-  abortClickHandler = handleAbortClick;
-  restartClickHandler = handleRestartClick;
-
-  gameboard.addEventListener("click", cellClickHandler);
-  abortGameButton.addEventListener("click", abortClickHandler);
-  restartGameButton.addEventListener("click", restartClickHandler);
+  configureGameListeners();
 }
 
 function changeValue(index, value) {
@@ -164,7 +179,7 @@ function changeClass(cell, mark) {
 
 function changeTurn(mark) {
   currentMark = getOppositeMark(mark);
-  gameStatus = currentMark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+  gameStatus = getGameStatus(currentMark, GAME_STATUS_TYPES.TURN);
   changeTitle(gameStatus);
 }
 
@@ -182,7 +197,7 @@ function makeMove(cell, mark, index) {
 
 function checkGameStatus(mark) {
   if (checkWin(mark)) {
-    gameStatus = mark === MARK.CROSS ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
+    gameStatus = getGameStatus(mark, GAME_STATUS_TYPES.WIN);
     endGame(mark);
     return;
   }
@@ -194,7 +209,6 @@ function checkGameStatus(mark) {
   }
 
   changeTurn(mark);
-  return;
 }
 
 function checkWin(mark) {
@@ -215,31 +229,37 @@ function endGame(mark) {
 
 function computerMoves(mark) {
   if (gameStatus !== GAME_STATUS.CROSS_TURN && gameStatus !== GAME_STATUS.NAUGHT_TURN) return;
+
   const opponentMark = getOppositeMark(mark);
   let moveIndex = -1;
 
   if (difficulty === GAME_DIFFICULTY_TYPES.BASIC) {
-    moveIndex = findRandomEmptyCell();
+    moveIndex = findRandomEmptyCell(cells);
     if (moveIndex !== -1) {
       makeMove(cellElements[moveIndex], mark, moveIndex);
     }
-  } else if (difficulty === GAME_DIFFICULTY_TYPES.ADVANCED) {
-    moveIndex = findWinningMove(mark);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
-      return;
-    }
-    moveIndex = findWinningMove(opponentMark);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
-      return;
-    }
-    moveIndex = findRandomEmptyCell();
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
-    }
-  } else {
-    throw new Error("Unsupported game difficulty");
+    return;
   }
-}
 
+  if (difficulty === GAME_DIFFICULTY_TYPES.ADVANCED) {
+    moveIndex = findWinningMove(cells, mark);
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+      return;
+    }
+
+    moveIndex = findWinningMove(cells, opponentMark);
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+      return;
+    }
+
+    moveIndex = findRandomEmptyCell(cells);
+    if (moveIndex !== -1) {
+      makeMove(cellElements[moveIndex], mark, moveIndex);
+    }
+    return;
+  }
+
+  throw new Error("Unsupported game difficulty");
+}

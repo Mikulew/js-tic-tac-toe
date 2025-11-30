@@ -9,42 +9,61 @@ const settingsSection = getHTMLElement(HTML_ELEMENTS.SETTINGS_VIEW);
 const secondPlayerButton = getHTMLElement(HTML_ELEMENTS.SECOND_PLAYER_BUTTON);
 const computerPlayerButton = getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON);
 
+const VIEW_TRANSITIONS = {
+  [BUTTON_TYPES.SECOND_PLAYER]: {
+    show: gameboardSection,
+    hide: menuSection,
+    action: () => initGame(PLAY_MODE.WITH_PLAYER),
+  },
+  [BUTTON_TYPES.COMPUTER_PLAYER]: {
+    show: settingsSection,
+    hide: menuSection,
+    action: () => initSettings(),
+  },
+  [BUTTON_TYPES.CANCEL]: {
+    show: menuSection,
+    hide: settingsSection,
+  },
+  [BUTTON_TYPES.PLAY]: {
+    show: gameboardSection,
+    hide: settingsSection,
+  },
+};
+
+function showView(element) {
+  if (!element) return;
+  element.classList.remove("hide");
+}
+
+function hideView(element) {
+  if (!element) return;
+  element.classList.add("hide");
+}
+
 export function initMenu() {
-  secondPlayerButton.addEventListener("click", () => {
-    initGame(PLAY_MODE.WITH_PLAYER);
-    hideMenu(BUTTON_TYPES.SECOND_PLAYER);
-  });
-  computerPlayerButton.addEventListener("click", () => {
-    initSettings();
-    hideMenu(BUTTON_TYPES.COMPUTER_PLAYER);
-  });
+  secondPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.SECOND_PLAYER));
+  computerPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.COMPUTER_PLAYER));
 }
 
 export function hideGameboard() {
-  menuSection.classList.remove("hide");
-  gameboardSection.classList.add("hide");
+  showView(menuSection);
+  hideView(gameboardSection);
 }
 
-export function hideSettings(buttonType = null) {
-  if (buttonType === null) throw new Error("buttonType argument must be provided");
-  if (buttonType === BUTTON_TYPES.CANCEL) {
-    menuSection.classList.remove("hide");
-  } else if (buttonType === BUTTON_TYPES.PLAY) {
-    gameboardSection.classList.remove("hide");
-  } else {
-    throw new Error("Unsupported settings' button");
+export function handleNavigation(buttonType = null) {
+  if (!buttonType) {
+    throw new Error("buttonType argument must be provided");
   }
-  settingsSection.classList.add("hide");
-}
 
-function hideMenu(buttonType = null) {
-  if (buttonType === null) throw new Error("buttonType argument must be provided");
-  if (buttonType === BUTTON_TYPES.SECOND_PLAYER) {
-    gameboardSection.classList.remove("hide");
-  } else if (buttonType === BUTTON_TYPES.COMPUTER_PLAYER) {
-    settingsSection.classList.remove("hide");
-  } else {
-    throw new Error("Unsupported menu's button");
+  const transition = VIEW_TRANSITIONS[buttonType];
+  if (!transition) {
+    throw new Error(`Unsupported menu button: ${buttonType}`);
   }
-  menuSection.classList.add("hide");
+
+  if (transition.action) {
+    transition.action();
+  }
+
+  showView(transition.show);
+  hideView(transition.hide);
 }

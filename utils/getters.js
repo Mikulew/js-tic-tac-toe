@@ -2,11 +2,13 @@ import {
   CLASS_NAME,
   GAME_TITLE,
   GAME_STATUS,
+  GAME_STATUS_TYPES,
   MARK,
   HTML_ELEMENTS,
   GAME_DEFAULT_SETTINGS,
   SELECT_NAMES,
   TURN_TYPES,
+  WINNING_COMBINATIONS,
 } from "../consts/index.js";
 
 const DOM_ELEMENTS = {
@@ -32,7 +34,7 @@ export function getTitle(status) {
 }
 
 export function getOppositeMark(mark) {
-  return mark === MARK.CROSS ? MARK.NAUGHT : MARK.CROSS; 
+  return mark === MARK.CROSS ? MARK.NAUGHT : MARK.CROSS;
 }
 
 export function getOppositeTurn(turn) {
@@ -48,45 +50,54 @@ export function getHTMLElement(element) {
 }
 
 export function refreshHTMLElement(element) {
-  switch(element) {
-    case HTML_ELEMENTS.CELLS: {
-      DOM_ELEMENTS[element].forEach(cellElement => {
-        const newCell = cellElement.cloneNode(true);
-        cellElement.parentNode.replaceChild(newCell, cellElement);
-      });
-      DOM_ELEMENTS[element] = document.querySelectorAll("[data-cell]");
-      return DOM_ELEMENTS[element];
-    }
+  switch (element) {
+    case HTML_ELEMENTS.CELLS:
+      return refreshCellElements();
     case HTML_ELEMENTS.SELECTED_MARK:
     case HTML_ELEMENTS.FIRST_MOVE:
     case HTML_ELEMENTS.GAME_DIFFICULTY:
-      const oldNode = DOM_ELEMENTS[element];
-      if (!oldNode || !oldNode.parentNode) return null;
-      const newNode = oldNode.cloneNode(true);
-      oldNode.parentNode.replaceChild(newNode, oldNode);
-      DOM_ELEMENTS[element] = newNode;
-      return newNode;
+      return refreshSingleElement(element);
     default:
-      return new Error("Unsupported HTML element");
+      throw new Error(`Unsupported HTML element: ${element}`);
   }
 }
 
-export function getEmptyMark(element) {
-  const isCollection =
-    Object.prototype.toString.call(element) === "[object NodeList]" ||
-    Object.prototype.toString.call(element) === "[object HTMLCollection]";
+function refreshCellElements() {
+  DOM_ELEMENTS[HTML_ELEMENTS.CELLS].forEach(cellElement => {
+    const newCell = cellElement.cloneNode(true);
+    cellElement.parentNode.replaceChild(newCell, cellElement);
+  });
+  DOM_ELEMENTS[HTML_ELEMENTS.CELLS] = document.querySelectorAll("[data-cell]");
+  return DOM_ELEMENTS[HTML_ELEMENTS.CELLS];
+}
 
-  if (isCollection) {
-    Array.from(element).forEach(e => {
-      e.classList.remove(getClassName(MARK.CROSS));
-      e.classList.remove(getClassName(MARK.NAUGHT));
-    });
+function refreshSingleElement(element) {
+  const oldNode = DOM_ELEMENTS[element];
+  if (!oldNode?.parentNode) return null;
+
+  const newNode = oldNode.cloneNode(true);
+  oldNode.parentNode.replaceChild(newNode, oldNode);
+  DOM_ELEMENTS[element] = newNode;
+  return newNode;
+}
+
+export function getEmptyMark(element) {
+  if (isNodeCollection(element)) {
+    Array.from(element).forEach(el => clearMarkClasses(el));
     return element;
   }
+  clearMarkClasses(element);
+  return element;
+}
 
+function clearMarkClasses(element) {
   element.classList.remove(getClassName(MARK.CROSS));
   element.classList.remove(getClassName(MARK.NAUGHT));
-  return element;
+}
+
+function isNodeCollection(element) {
+  const proto = Object.prototype.toString.call(element);
+  return proto === "[object NodeList]" || proto === "[object HTMLCollection]";
 }
 
 export function refreshGameSettings(settings) {
@@ -99,7 +110,18 @@ export function getSelectedKeyName(keyName) {
   return SELECT_NAMES[keyName];
 }
 
-export function findRandomEmptyCell() {
+export function getGameStatus(mark, type) {
+  switch (type) {
+    case GAME_STATUS_TYPES.TURN:
+      return mark === MARK.CROSS ? GAME_STATUS.CROSS_TURN : GAME_STATUS.NAUGHT_TURN;
+    case GAME_STATUS_TYPES.WIN:
+      return mark === MARK.CROSS ? GAME_STATUS.CROSS_WINS : GAME_STATUS.NAUGHT_WINS;
+    default:
+      throw new Error(`Unsupported type argument: ${type}`);
+  }
+}
+
+export function findRandomEmptyCell(cells) {
   const emptyCells = cells
     .map((cell, index) => (cell === "" ? index : -1))
     .filter(index => index !== -1);
@@ -108,7 +130,7 @@ export function findRandomEmptyCell() {
   return emptyCells[Math.floor(Math.random() * emptyCells.length)];
 }
 
-export function findWinningMove(mark) {
+export function findWinningMove(cells, mark) {
   for (const combination of WINNING_COMBINATIONS) {
     const filledCells = combination.filter(index => cells[index] === mark);
     const emptyCells = combination.filter(index => cells[index] === "");

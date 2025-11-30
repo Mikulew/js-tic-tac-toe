@@ -35,8 +35,8 @@
 
       <div class="wrapper">
         <div class="wrapper action-wrapper">
-          <button id="secondPlayer" class="action-button">2 player game</button>
-          <button id="computerPlayer" class="action-button">Play with computer</button>
+          <button id="secondPlayer" class="action-button" type="button">2 player game</button>
+          <button id="computerPlayer" class="action-button" type="button">Play with computer</button>
         </div>
       </div>
     </section>
@@ -59,37 +59,43 @@
       </div>
 
       <div class="wrapper action-wrapper">
-        <button id="abortGame" class="action-button">Abort game</button>
-        <button id="restartGame" class="action-button">Restart game</button>
+        <button id="abortGame" class="action-button" type="button">Abort game</button>
+        <button id="restartGame" class="action-button" type="button">Restart game</button>
       </div>
     </section>
 
     <section id="settings" class="container hide">
       <h1 class="title">Game settings</h1>
 
-      <div id="form" class="settings-form">
-        <h2 class="subtitle">Designate a mark</h2>
-        <select class="select" id="selectedMark" name="selectedMark">
-          <option class="option" value="X">X – cross</option>
-          <option class="option" value="O">O – naught</option>
-        </select>
-        <h2 class="subtitle">First move</h2>
-        <select class="select" id="firstMove" name="firstMove">
-          <option class="option" value="PLAYER">Player</option>
-          <option class="option" value="COMPUTER">Computer</option>
-        </select>
-        <h2 class="subtitle">Game difficulty</h2>
-        <select class="select" id="gameDifficulty" name="gameDifficulty">
-          <option class="option" value="BASIC">1 – basic</option>
-          <option class="option" value="ADVANCED">2 – advanced</option>
-        </select>
-      </div>
+      <form id="form" class="settings-form">
+        <fieldset class="form-field">
+          <legend class="subtitle">Designate a mark</legend>
+          <select class="select" id="selectedMark" name="selectedMark" required>
+            <option value="X">X – cross</option>
+            <option value="O">O – naught</option>
+          </select>
+        </fieldset>
 
-      <div class="wrapper">
-        <div class="wrapper action-wrapper">
-          <button id="cancel" class="action-button">Cancel</button>
-          <button id="playGame" class="action-button">Play</button>
-        </div>
+        <fieldset class="form-field">
+          <legend class="subtitle">First move</legend>
+          <select class="select" id="firstMove" name="firstMove" required>
+            <option value="PLAYER">Player</option>
+            <option value="COMPUTER">Computer</option>
+          </select>
+        </fieldset>
+
+        <fieldset class="form-field">
+          <legend class="subtitle">Game difficulty</legend>
+          <select class="select" id="gameDifficulty" name="gameDifficulty" required>
+            <option value="BASIC">1 – basic</option>
+            <option value="ADVANCED">2 – advanced</option>
+          </select>
+        </fieldset>
+      </form>
+
+      <div class="wrapper action-wrapper">
+        <button id="cancel" class="action-button" type="button">Cancel</button>
+        <button id="playGame" class="action-button" type="button">Play</button>
       </div>
     </section>
   </body>

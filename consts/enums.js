@@ -6,6 +6,11 @@ export const GAME_STATUS = {
   DRAW: "DRAW",
 };
 
+export const GAME_STATUS_TYPES = {
+  TURN: "TURN",
+  WIN: "WIN",
+};
+
 export const HTML_ELEMENTS = {
   MENU_VIEW: "MENU_VIEW",
   GAMEBOARD_VIEW: "GAMEBOARD_VIEW",
