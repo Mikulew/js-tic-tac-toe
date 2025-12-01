@@ -30,12 +30,13 @@ const restartGameButton = getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON);
 let cellElements = getHTMLElement(HTML_ELEMENTS.CELLS);
 let title = getHTMLElement(HTML_ELEMENTS.TITLE);
 
+let cells = Array(9).fill("");
 let currentMark = MARK.CROSS;
 let gameStatus = GAME_STATUS.CROSS_TURN;
 let currentMode = null;
 let currentTurn = null;
+let moveMade = false;
 let difficulty = null;
-let cells = Array(9).fill("");
 let cellClickHandler = null;
 let abortClickHandler = null;
 let restartClickHandler = null;
@@ -54,6 +55,7 @@ export function initGame(mode, settings = null) {
   getEmptyMark(cellElements);
   configureEventListeners();
   configureGameboard();
+  updateRestartButtonState();
 
   if (currentMode === PLAY_MODE.WITH_COMPUTER && currentTurn === TURN_TYPES.COMPUTER) {
     computerMoves(currentMark);
@@ -65,6 +67,7 @@ export function restartGame() {
   cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
   getEmptyMark(cellElements)
   configureGameboard();
+  updateRestartButtonState();
 };
 
 function resetState() {
@@ -77,6 +80,12 @@ function resetState() {
     currentMode === PLAY_MODE.WITH_PLAYER
       ? GAME_STATUS.CROSS_TURN
       : getGameStatus(currentMark, GAME_STATUS_TYPES.TURN);
+}
+
+function updateRestartButtonState() {
+  const enabled = Array.isArray(cells) ? cells.some(cell => cell !== "") : false;
+  moveMade = enabled;
+  restartGameButton.disabled = !enabled;
 }
 
 function configureGameboard() {
@@ -187,6 +196,7 @@ function makeMove(cell, mark, index) {
   changeValue(index, mark);
   changeClass(cell, mark);
   checkGameStatus(mark);
+  updateRestartButtonState();
   if (currentMode === PLAY_MODE.WITH_COMPUTER) {
     currentTurn = getOppositeTurn(currentTurn);
     if (currentTurn === TURN_TYPES.COMPUTER) {
