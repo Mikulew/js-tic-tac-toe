@@ -243,33 +243,30 @@ function computerMoves(mark) {
   const opponentMark = getOppositeMark(mark);
   let moveIndex = -1;
 
-  if (difficulty === GAME_DIFFICULTY_TYPES.BASIC) {
-    moveIndex = findRandomEmptyCell(cells);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
+  switch (difficulty) {
+    case GAME_DIFFICULTY_TYPES.BASIC: {
+      moveIndex = findRandomEmptyCell(cells);
+      if (moveIndex !== -1) {
+        return makeMove(cellElements[moveIndex], mark, moveIndex);
+      }
     }
-    return;
-  }
+    case GAME_DIFFICULTY_TYPES.ADVANCED: {
+      moveIndex = findWinningMove(cells, mark);
+      if (moveIndex !== -1) {
+        return makeMove(cellElements[moveIndex], mark, moveIndex);
+      }
 
-  if (difficulty === GAME_DIFFICULTY_TYPES.ADVANCED) {
-    moveIndex = findWinningMove(cells, mark);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
+      moveIndex = findWinningMove(cells, opponentMark);
+      if (moveIndex !== -1) {
+        return makeMove(cellElements[moveIndex], mark, moveIndex);
+      }
+
+      moveIndex = findRandomEmptyCell(cells);
+      if (moveIndex !== -1) {
+        makeMove(cellElements[moveIndex], mark, moveIndex);
+      }
       return;
     }
-
-    moveIndex = findWinningMove(cells, opponentMark);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
-      return;
-    }
-
-    moveIndex = findRandomEmptyCell(cells);
-    if (moveIndex !== -1) {
-      makeMove(cellElements[moveIndex], mark, moveIndex);
-    }
-    return;
+    default: throw new Error("Unsupported game difficulty");
   }
-
-  throw new Error("Unsupported game difficulty");
 }
