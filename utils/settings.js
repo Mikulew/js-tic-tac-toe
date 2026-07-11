@@ -8,12 +8,8 @@ import {
 } from "../consts/index.js";
 import { initGame } from "./game.js";
 import { handleNavigation } from "./menu.js";
-import {
-  getHTMLElement,
-  getSelectedKeyName,
-  refreshGameSettings,
-  refreshHTMLElement,
-} from "./getters.js";
+import { getHTMLElement, refreshHTMLElement } from "./dom.js";
+import { getSelectedKeyName, refreshGameSettings } from "./settingsHelpers.js"
 
 const cancelButton = getHTMLElement(HTML_ELEMENTS.CANCEL_BUTTON);
 const playButton = getHTMLElement(HTML_ELEMENTS.PLAY_BUTTON);

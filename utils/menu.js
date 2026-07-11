@@ -1,7 +1,7 @@
 import { BUTTON_TYPES, HTML_ELEMENTS, PLAY_MODE } from "../consts/index.js";
 import { initGame } from "./game.js";
 import { initSettings } from "./settings.js";
-import { getHTMLElement } from "./getters.js";
+import { getHTMLElement } from "./dom.js";
 
 const menuSection = getHTMLElement(HTML_ELEMENTS.MENU_VIEW);
 const gameboardSection = getHTMLElement(HTML_ELEMENTS.GAMEBOARD_VIEW);

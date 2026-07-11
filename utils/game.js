@@ -9,18 +9,15 @@ import {
   TURN_TYPES,
   GAME_DIFFICULTY_TYPES,
 } from "../consts/index.js";
+import { getHTMLElement, refreshHTMLElement } from "./dom.js";
 import {
-  getHTMLElement,
-  getTitle,
   getOppositeMark,
-  refreshHTMLElement,
   getEmptyMark,
   getClassName,
   getOppositeTurn,
-  findRandomEmptyCell,
-  findWinningMove,
-  getGameStatus,
-} from "./getters.js";
+} from "./gameHelpers.js";
+import { findRandomEmptyCell, findWinningMove } from "./ai.js";
+import { getTitle, getGameStatus } from "./gameStatus.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
 
