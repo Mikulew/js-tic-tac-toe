@@ -71,7 +71,7 @@ body {
   text-align: center;
 }
 
-.action-wrapper  {
+.action-wrapper {
   flex: 0 0 100px;
 }
 
@@ -150,7 +150,8 @@ body {
   cursor: pointer;
 }
 
-.cell.x, .cell.o {
+.cell.x,
+.cell.o {
   cursor: not-allowed;
 }
 
@@ -164,7 +165,7 @@ body {
 .gameboard.x .cell:not(.x):not(.o):hover::before,
 .gameboard.x .cell:not(.x):not(.o):hover::after,
 .gameboard.o .cell:not(.x):not(.o):hover::before,
-.gameboard.o .cell:not(.x):not(.o):hover::after  {
+.gameboard.o .cell:not(.x):not(.o):hover::after {
   background-color: var(--disabled);
 }
 
