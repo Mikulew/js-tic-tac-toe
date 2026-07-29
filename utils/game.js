@@ -21,12 +21,18 @@ import { getTitle, getGameStatus } from "./gameStatus.js";
 import { hideGameboard } from "./menu.js";
 import { checkSettingsValidation } from "./settings.js";
 
-const gameboard = getHTMLElement(HTML_ELEMENTS.PLAYGROUND);
-const abortGameButton = getHTMLElement(HTML_ELEMENTS.ABORT_GAME_BUTTON);
-const restartGameButton = getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON);
-let cellElements = getHTMLElement(HTML_ELEMENTS.CELLS);
-let title = getHTMLElement(HTML_ELEMENTS.TITLE);
-
+const DOM = {
+  gameboard: getHTMLElement(HTML_ELEMENTS.PLAYGROUND),
+  abortGameButton: getHTMLElement(HTML_ELEMENTS.ABORT_GAME_BUTTON),
+  restartGameButton: getHTMLElement(HTML_ELEMENTS.RESTART_GAME_BUTTON),
+  cellElements: getHTMLElement(HTML_ELEMENTS.CELLS),
+  title: getHTMLElement(HTML_ELEMENTS.TITLE),
+};
+const handlers = {
+  cellClick: null,
+  abortClick: null,
+  restartClick: null,
+};
 let cells = Array(9).fill("");
 let currentMark = MARK.CROSS;
 let gameStatus = GAME_STATUS.CROSS_TURN;
@@ -34,9 +40,6 @@ let currentMode = null;
 let currentTurn = null;
 let moveMade = false;
 let difficulty = null;
-let cellClickHandler = null;
-let abortClickHandler = null;
-let restartClickHandler = null;
 
 export function initGame(mode, settings = null) {
   try {
@@ -48,8 +51,8 @@ export function initGame(mode, settings = null) {
 
   cells = Array(9).fill("");
   currentMode = mode;
-  cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
-  getEmptyMark(cellElements);
+  DOM.cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
+  getEmptyMark(DOM.cellElements);
   configureEventListeners();
   configureGameboard();
   updateRestartButtonState();
@@ -61,8 +64,8 @@ export function initGame(mode, settings = null) {
 
 export function restartGame() {
   resetState();
-  cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
-  getEmptyMark(cellElements)
+  DOM.cellElements = refreshHTMLElement(HTML_ELEMENTS.CELLS);
+  getEmptyMark(DOM.cellElements)
   configureGameboard();
   updateRestartButtonState();
 };
@@ -82,14 +85,14 @@ function resetState() {
 function updateRestartButtonState() {
   const enabled = Array.isArray(cells) ? cells.some(cell => cell !== "") : false;
   moveMade = enabled;
-  restartGameButton.disabled = !enabled;
+  DOM.restartGameButton.disabled = !enabled;
 }
 
 function configureGameboard() {
   changeTitle(gameStatus);
-  gameboard.classList.remove(getClassName(MARK.NAUGHT));
-  gameboard.classList.remove(getClassName(MARK.CROSS));
-  gameboard.classList.add(getClassName(currentMark));
+  DOM.gameboard.classList.remove(getClassName(MARK.NAUGHT));
+  DOM.gameboard.classList.remove(getClassName(MARK.CROSS));
+  DOM.gameboard.classList.add(getClassName(currentMark));
 }
 
 function invokeGameInitilization(mode, settings) {
@@ -113,9 +116,9 @@ function invokeGameInitilization(mode, settings) {
 
 function handleCellClick(e) {
   const cell = e.target?.closest?.("[data-cell]") ?? e.target;
-  if (!cell || !gameboard.contains(cell)) return;
+  if (!cell || !DOM.gameboard.contains(cell)) return;
 
-  const index = Array.from(cellElements).indexOf(cell);
+  const index = Array.from(DOM.cellElements).indexOf(cell);
   if (index === -1 || cells[index] !== "") return;
 
   handleClick(e, index);
@@ -140,29 +143,29 @@ function handleClick(e, index) {
 }
 
 function configureGameListeners() {
-  cellClickHandler = handleCellClick;
-  abortClickHandler = handleAbortClick;
-  restartClickHandler = handleRestartClick;
+  handlers.cellClick = handleCellClick;
+  handlers.abortClick = handleAbortClick;
+  handlers.restartClick = handleRestartClick;
 
-  gameboard.addEventListener("click", cellClickHandler);
-  abortGameButton.addEventListener("click", abortClickHandler);
-  restartGameButton.addEventListener("click", restartClickHandler);
+  DOM.gameboard.addEventListener("click", handlers.cellClick);
+  DOM.abortGameButton.addEventListener("click", handlers.abortClick);
+  DOM.restartGameButton.addEventListener("click", handlers.restartClick);
 }
 
 function configureEventListeners() {
-  if (cellClickHandler) {
-    gameboard.removeEventListener("click", cellClickHandler);
-    cellClickHandler = null;
+  if (handlers.cellClick) {
+    DOM.gameboard.removeEventListener("click", handlers.cellClick);
+    handlers.cellClick = null;
   }
 
-  if (abortClickHandler) {
-    abortGameButton.removeEventListener("click", abortClickHandler);
-    abortClickHandler = null;
+  if (handlers.abortClick) {
+    DOM.abortGameButton.removeEventListener("click", handlers.abortClick);
+    handlers.abortClick = null;
   }
 
-  if (restartClickHandler) {
-    restartGameButton.removeEventListener("click", restartClickHandler);
-    restartClickHandler = null;
+  if (handlers.restartClick) {
+    DOM.restartGameButton.removeEventListener("click", handlers.restartClick);
+    handlers.restartClick = null;
   }
 
   configureGameListeners();
@@ -173,14 +176,14 @@ function changeValue(index, value) {
 }
 
 function changeTitle(status) {
-  title.textContent = getTitle(status);
+  DOM.title.textContent = getTitle(status);
 }
 
 function changeClass(cell, mark) {
   getEmptyMark(cell);
   cell.classList.add(getClassName(mark));
-  gameboard.classList.remove(getClassName(mark));
-  gameboard.classList.add(getClassName(getOppositeMark(mark)));
+  DOM.gameboard.classList.remove(getClassName(mark));
+  DOM.gameboard.classList.add(getClassName(getOppositeMark(mark)));
 }
 
 function changeTurn(mark) {
@@ -230,8 +233,8 @@ function isDraw() {
 
 function endGame(mark) {
   changeTitle(gameStatus);
-  gameboard.classList.remove(getClassName(getOppositeMark(mark)));
-  gameboard.classList.add("presentation");
+  DOM.gameboard.classList.remove(getClassName(getOppositeMark(mark)));
+  DOM.gameboard.classList.add("presentation");
 }
 
 function computerMoves(mark) {
@@ -244,23 +247,23 @@ function computerMoves(mark) {
     case GAME_DIFFICULTY_TYPES.BASIC: {
       moveIndex = findRandomEmptyCell(cells);
       if (moveIndex !== -1) {
-        return makeMove(cellElements[moveIndex], mark, moveIndex);
+        return makeMove(DOM.cellElements[moveIndex], mark, moveIndex);
       }
     }
     case GAME_DIFFICULTY_TYPES.ADVANCED: {
       moveIndex = findWinningMove(cells, mark);
       if (moveIndex !== -1) {
-        return makeMove(cellElements[moveIndex], mark, moveIndex);
+        return makeMove(DOM.cellElements[moveIndex], mark, moveIndex);
       }
 
       moveIndex = findWinningMove(cells, opponentMark);
       if (moveIndex !== -1) {
-        return makeMove(cellElements[moveIndex], mark, moveIndex);
+        return makeMove(DOM.cellElements[moveIndex], mark, moveIndex);
       }
 
       moveIndex = findRandomEmptyCell(cells);
       if (moveIndex !== -1) {
-        makeMove(cellElements[moveIndex], mark, moveIndex);
+        makeMove(DOM.cellElements[moveIndex], mark, moveIndex);
       }
       return;
     }

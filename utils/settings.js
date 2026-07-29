@@ -11,21 +11,24 @@ import { handleNavigation } from "./menu.js";
 import { getHTMLElement, refreshHTMLElement } from "./dom.js";
 import { getSelectedKeyName, refreshGameSettings } from "./settingsHelpers.js"
 
-const cancelButton = getHTMLElement(HTML_ELEMENTS.CANCEL_BUTTON);
-const playButton = getHTMLElement(HTML_ELEMENTS.PLAY_BUTTON);
-let selectedMarkOption = getHTMLElement(HTML_ELEMENTS.SELECTED_MARK);
-let firstMoveOption = getHTMLElement(HTML_ELEMENTS.FIRST_MOVE);
-let gameDifficultyOption = getHTMLElement(HTML_ELEMENTS.GAME_DIFFICULTY);
-
-let cancelHandler = null;
-let playHandler = null;
-let changeHandler = null;
+const DOM = {
+  cancelButton: getHTMLElement(HTML_ELEMENTS.CANCEL_BUTTON),
+  playButton: getHTMLElement(HTML_ELEMENTS.PLAY_BUTTON),
+  selectedMarkOption: getHTMLElement(HTML_ELEMENTS.SELECTED_MARK),
+  firstMoveOption: getHTMLElement(HTML_ELEMENTS.FIRST_MOVE),
+  gameDifficultyOption: getHTMLElement(HTML_ELEMENTS.GAME_DIFFICULTY),
+};
+const handlers = {
+  cancel: null,
+  play: null,
+  change: null,
+};
 
 export function initSettings() {
   refreshGameSettings(GAME_SETTINGS);
-  selectedMarkOption = refreshHTMLElement(HTML_ELEMENTS.SELECTED_MARK);
-  firstMoveOption = refreshHTMLElement(HTML_ELEMENTS.FIRST_MOVE);
-  gameDifficultyOption = refreshHTMLElement(HTML_ELEMENTS.GAME_DIFFICULTY);
+  DOM.selectedMarkOption = refreshHTMLElement(HTML_ELEMENTS.SELECTED_MARK);
+  DOM.firstMoveOption = refreshHTMLElement(HTML_ELEMENTS.FIRST_MOVE);
+  DOM.gameDifficultyOption = refreshHTMLElement(HTML_ELEMENTS.GAME_DIFFICULTY);
   configureEventListeners();
 }
 
@@ -49,33 +52,33 @@ function checkSettingsPropertiesAreProvided(settings) {
 }
 
 function configureSettingsListeners() {
-  cancelHandler = handleCancel;
-  playHandler = handlePlay;
-  changeHandler = handleOptionChange;
+  handlers.cancel = handleCancel;
+  handlers.play = handlePlay;
+  handlers.change = handleOptionChange;
 
-  cancelButton.addEventListener("click", cancelHandler);
-  playButton.addEventListener("click", playHandler);
-  selectedMarkOption.addEventListener("change", changeHandler);
-  firstMoveOption.addEventListener("change", changeHandler);
-  gameDifficultyOption.addEventListener("change", changeHandler);
+  DOM.cancelButton.addEventListener("click", handlers.cancel);
+  DOM.playButton.addEventListener("click", handlers.play);
+  DOM.selectedMarkOption.addEventListener("change", handlers.change);
+  DOM.firstMoveOption.addEventListener("change", handlers.change);
+  DOM.gameDifficultyOption.addEventListener("change", handlers.change);
 }
 
 function configureEventListeners() {
-  if (cancelHandler) {
-    cancelButton.removeEventListener("click", cancelHandler);
-    cancelHandler = null;
+  if (handlers.cancel) {
+    DOM.cancelButton.removeEventListener("click", handlers.cancel);
+    handlers.cancel = null;
   }
 
-  if (playHandler) {
-    playButton.removeEventListener("click", playHandler);
-    playHandler = null;
+  if (handlers.play) {
+    DOM.playButton.removeEventListener("click", handlers.play);
+    handlers.play = null;
   }
 
-  if (changeHandler) {
-    selectedMarkOption.removeEventListener("change", changeHandler);
-    firstMoveOption.removeEventListener("change", changeHandler);
-    gameDifficultyOption.removeEventListener("change", changeHandler);
-    changeHandler = null;
+  if (handlers.change) {
+    DOM.selectedMarkOption.removeEventListener("change", handlers.change);
+    DOM.firstMoveOption.removeEventListener("change", handlers.change);
+    DOM.gameDifficultyOption.removeEventListener("change", handlers.change);
+    handlers.change = null;
   }
 
   configureSettingsListeners();

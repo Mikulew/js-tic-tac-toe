@@ -3,30 +3,32 @@ import { initGame } from "./game.js";
 import { initSettings } from "./settings.js";
 import { getHTMLElement } from "./dom.js";
 
-const menuSection = getHTMLElement(HTML_ELEMENTS.MENU_VIEW);
-const gameboardSection = getHTMLElement(HTML_ELEMENTS.GAMEBOARD_VIEW);
-const settingsSection = getHTMLElement(HTML_ELEMENTS.SETTINGS_VIEW);
-const secondPlayerButton = getHTMLElement(HTML_ELEMENTS.SECOND_PLAYER_BUTTON);
-const computerPlayerButton = getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON);
+const DOM = {
+  menuSection: getHTMLElement(HTML_ELEMENTS.MENU_VIEW),
+  gameboardSection: getHTMLElement(HTML_ELEMENTS.GAMEBOARD_VIEW),
+  settingsSection: getHTMLElement(HTML_ELEMENTS.SETTINGS_VIEW),
+  secondPlayerButton: getHTMLElement(HTML_ELEMENTS.SECOND_PLAYER_BUTTON),
+  computerPlayerButton: getHTMLElement(HTML_ELEMENTS.COMPUTER_PLAYER_BUTTON),
+};
 
 const VIEW_TRANSITIONS = {
   [BUTTON_TYPES.SECOND_PLAYER]: {
-    show: gameboardSection,
-    hide: menuSection,
+    show: DOM.gameboardSection,
+    hide: DOM.menuSection,
     action: () => initGame(PLAY_MODE.WITH_PLAYER),
   },
   [BUTTON_TYPES.COMPUTER_PLAYER]: {
-    show: settingsSection,
-    hide: menuSection,
+    show: DOM.settingsSection,
+    hide: DOM.menuSection,
     action: () => initSettings(),
   },
   [BUTTON_TYPES.CANCEL]: {
-    show: menuSection,
-    hide: settingsSection,
+    show: DOM.menuSection,
+    hide: DOM.settingsSection,
   },
   [BUTTON_TYPES.PLAY]: {
-    show: gameboardSection,
-    hide: settingsSection,
+    show: DOM.gameboardSection,
+    hide: DOM.settingsSection,
   },
 };
 
@@ -41,13 +43,13 @@ function hideView(element) {
 }
 
 export function initMenu() {
-  secondPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.SECOND_PLAYER));
-  computerPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.COMPUTER_PLAYER));
+  DOM.secondPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.SECOND_PLAYER));
+  DOM.computerPlayerButton.addEventListener("click", () => handleNavigation(BUTTON_TYPES.COMPUTER_PLAYER));
 }
 
 export function hideGameboard() {
-  showView(menuSection);
-  hideView(gameboardSection);
+  showView(DOM.menuSection);
+  hideView(DOM.gameboardSection);
 }
 
 export function handleNavigation(buttonType = null) {
